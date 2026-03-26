@@ -19,7 +19,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
         }
         h2 {
             text-align: center;
@@ -92,10 +92,51 @@
     <div class="container">
         <h2>Welcome, {{ auth()->user()->name }}!</h2>
         <p style="text-align: center; color: #4b5563; margin-bottom: 1.5rem;">You are successfully logged in.</p>
-        <form action="/logout" method="POST">
+        <form action="/logout" method="POST" style="margin-bottom: 2rem;">
             @csrf
             <button type="submit" style="background-color: #ef4444;">Log Out</button>
         </form>
+
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
+
+        <h3 style="color: #1f2937; margin-top: 0;">My To-Do List</h3>
+        
+        <!-- Add To-Do Form -->
+        <form action="/todos" method="POST" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem;">
+            @csrf
+            <input type="text" name="title" placeholder="New task..." required style="flex-grow: 1; margin: 0; padding: 0.75rem;">
+            <button type="submit" style="width: auto; margin: 0; padding: 0.75rem 1rem;">Add</button>
+        </form>
+
+        <!-- To-Do Items -->
+        @if(isset($todos) && $todos->count() > 0)
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                @foreach($todos as $todo)
+                    <li style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <!-- Toggle Completion -->
+                        <form action="/todos/{{ $todo->id }}" method="POST" style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            @csrf
+                            @method('PUT')
+                            <input type="checkbox" name="is_completed" onChange="this.form.submit()" {{ $todo->is_completed ? 'checked' : '' }} style="cursor: pointer; width: 1.25rem; height: 1.25rem;">
+                            <span style="color: {{ $todo->is_completed ? '#9ca3af' : '#1f2937' }}; text-decoration: {{ $todo->is_completed ? 'line-through' : 'none' }}; font-size: 0.95rem;">
+                                {{ $todo->title }}
+                            </span>
+                        </form>
+                        
+                        <!-- Delete Form -->
+                        <form action="/todos/{{ $todo->id }}" method="POST" style="margin: 0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background-color: transparent; color: #ef4444; width: auto; padding: 0.25rem 0.5rem; margin: 0; font-size: 0.875rem; border: 1px solid #fca5a5; display: flex; align-items: center; gap: 0.25rem;">
+                                Delete
+                            </button>
+                        </form>
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <p style="text-align: center; color: #6b7280; font-size: 0.9rem;">No tasks yet. Create one above!</p>
+        @endif
     </div>
     @else
     <div class="container">
