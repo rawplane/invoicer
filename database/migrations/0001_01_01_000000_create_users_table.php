@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('business_name');
+            $table->string('business_logo')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->string('subscription_plan')->default('free_trial');
+            $table->timestamp('trial_ends_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
